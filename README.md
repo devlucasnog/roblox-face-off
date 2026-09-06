@@ -30,7 +30,7 @@ and groups — scores each category and declares a winner.
 
 | Tool | Why |
 |---|---|
-| **React 19** | `useActionState` handles the form submission, pending state and result in one place, without a manual `onSubmit` + `preventDefault` dance |
+| **React 19** | `useActionState` owns the submission, its pending flag and the resulting error in one place; `onSubmit` only guards it, cancelling the action when client-side validation fails |
 | **TypeScript** | The Roblox API returns deeply nested data from five different hosts — types catch shape mistakes at write time instead of runtime |
 | **Vite** | Fast dev server and build |
 | **Tailwind CSS 4** | Configured through `@tailwindcss/vite`, no `postcss.config` needed |
