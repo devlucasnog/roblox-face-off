@@ -50,11 +50,21 @@ type ThumbnailsResponse = {
   data: Thumbnail[];
 };
 
+export class RobloxApiError extends Error {
+  constructor(
+    readonly status: number,
+    url: string,
+  ) {
+    super(`Roblox request failed (${status}): ${url}`);
+    this.name = "RobloxApiError";
+  }
+}
+
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, init);
 
   if (!response.ok) {
-    throw new Error(`Roblox request failed (${response.status}): ${url}`);
+    throw new RobloxApiError(response.status, url);
   }
 
   return (await response.json()) as T;

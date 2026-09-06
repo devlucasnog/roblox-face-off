@@ -1,10 +1,15 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-import { fetchPlayerStats, resolveUsernames } from "./_lib/roblox";
+import {
+  fetchPlayerStats,
+  resolveUsernames,
+  RobloxApiError,
+} from "./_lib/roblox";
 
 const CACHE_BATTLE = "public, s-maxage=300, stale-while-revalidate=600";
 const CACHE_NOT_FOUND = "public, s-maxage=60";
 const CACHE_NONE = "no-store";
+const RETRY_AFTER_SECONDS = 10;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { username1, username2 } = req.query;
@@ -65,6 +70,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } catch (error) {
     console.error(error);
     res.setHeader("Cache-Control", CACHE_NONE);
+
+    if (error instanceof RobloxApiError && error.status === 429) {
+      res.setHeader("Retry-After", RETRY_AFTER_SECONDS);
+      res.status(429).json({
+        error: `Roblox is rate-limiting requests. Try again in ${RETRY_AFTER_SECONDS} seconds.`,
+      });
+      return;
+    }
+
     res.status(502).json({ error: "Failed to fetch player data from Roblox." });
   }
 }

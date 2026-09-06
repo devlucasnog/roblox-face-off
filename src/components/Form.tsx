@@ -11,12 +11,20 @@ type FormProps = {
 };
 
 export default function Form({ battle }: FormProps) {
-  const { usernames, errors, error, isPending, formAction, setUsername } =
-    battle;
+  const {
+    usernames,
+    errors,
+    error,
+    isPending,
+    formAction,
+    onSubmit,
+    setUsername,
+  } = battle;
 
   return (
     <form
       action={formAction}
+      onSubmit={onSubmit}
       className="w-full max-w-3xl mx-auto text-center p-8 md:p-10 rounded-2xl border border-slate-800 bg-slate-900/80 shadow-2xl shadow-black/40"
     >
       <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-0 max-w-2xl mx-auto">
@@ -61,7 +69,10 @@ export default function Form({ battle }: FormProps) {
       </p>
 
       {error && (
-        <p role="alert" className="mt-4 text-sm text-red-500">
+        <p
+          role="alert"
+          className="mt-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+        >
           {error}
         </p>
       )}

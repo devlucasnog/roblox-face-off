@@ -22,7 +22,7 @@ function App() {
 
   const screen = battleResult
     ? "result"
-    : battle.isPending
+    : battle.showSkeleton
       ? "loading"
       : "form";
 
@@ -60,7 +60,7 @@ function App() {
                     playerB={battleResult.playerB}
                     onReset={() => setBattleResult(null)}
                   />
-                ) : battle.isPending ? (
+                ) : battle.showSkeleton ? (
                   <ResultSkeleton />
                 ) : (
                   <Form battle={battle} />

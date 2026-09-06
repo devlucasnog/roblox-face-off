@@ -1,4 +1,4 @@
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState, type FormEvent } from "react";
 
 import type { BattleResult } from "../types/player";
 
@@ -20,12 +20,14 @@ const INITIAL_USERNAMES: Record<UsernameField, string> = {
   username2: "",
 };
 
+const SKELETON_DELAY_MS = 300;
+
 export function useBattle({ onSuccess }: UseBattleOptions) {
   const [usernames, setUsernames] = useState(INITIAL_USERNAMES);
   const [errors, setErrors] = useState<BattleFormErrors>({});
-  const [isFetching, setIsFetching] = useState(false);
+  const [isSlow, setIsSlow] = useState(false);
 
-  async function startBattle(): Promise<BattleState> {
+  function validate() {
     const username1 = usernames.username1.trim();
     const username2 = usernames.username2.trim();
 
@@ -39,13 +41,23 @@ export function useBattle({ onSuccess }: UseBattleOptions) {
 
     setErrors(newErrors);
 
-    if (Object.keys(newErrors).length > 0) {
-      return { success: false };
+    return Object.keys(newErrors).length === 0;
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    if (!validate()) {
+      event.preventDefault();
+      return;
     }
 
-    const params = new URLSearchParams({ username1, username2 });
+    setIsSlow(false);
+  }
 
-    setIsFetching(true);
+  async function startBattle(): Promise<BattleState> {
+    const params = new URLSearchParams({
+      username1: usernames.username1.trim(),
+      username2: usernames.username2.trim(),
+    });
 
     try {
       const response = await fetch(`/api/battle?${params.toString()}`);
@@ -53,10 +65,12 @@ export function useBattle({ onSuccess }: UseBattleOptions) {
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        return {
-          success: false,
-          error: data?.error ?? "Something went wrong. Please try again.",
-        };
+        const fallback =
+          response.status === 429
+            ? "Too many requests. Wait a few seconds and try again."
+            : "Something went wrong. Please try again.";
+
+        return { success: false, error: data?.error ?? fallback };
       }
 
       if (!data) {
@@ -75,14 +89,20 @@ export function useBattle({ onSuccess }: UseBattleOptions) {
         error:
           "Could not reach the server. Check your connection and try again.",
       };
-    } finally {
-      setIsFetching(false);
     }
   }
 
-  const [state, formAction] = useActionState(startBattle, {
+  const [state, formAction, isPending] = useActionState(startBattle, {
     success: false,
   });
+
+  useEffect(() => {
+    if (!isPending) return;
+
+    const timeout = setTimeout(() => setIsSlow(true), SKELETON_DELAY_MS);
+
+    return () => clearTimeout(timeout);
+  }, [isPending]);
 
   function setUsername(field: UsernameField, value: string) {
     setUsernames((prev) => ({ ...prev, [field]: value }));
@@ -97,8 +117,10 @@ export function useBattle({ onSuccess }: UseBattleOptions) {
     usernames,
     errors,
     error: state.error,
-    isPending: isFetching,
+    isPending,
+    showSkeleton: isPending && isSlow,
     formAction,
+    onSubmit: handleSubmit,
     setUsername,
     addSuggestion,
   };

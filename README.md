@@ -8,7 +8,23 @@ Compare two Roblox players side by side and see who wins the face-off. Type two
 usernames, and the app pulls their public stats — friends, followers, following
 and groups — scores each category and declares a winner.
 
-> **Screenshot:** _add one here once you're happy with the final design._
+<p align="center">
+  <img src="docs/demo.gif" alt="Two usernames typed into the form, the loading skeleton, and the result card revealing the stat bars and final score" width="800">
+</p>
+
+## Screenshots
+
+**The form.** Two usernames, or one of the shortcuts to fill them in.
+
+<p align="center">
+  <img src="docs/screenshot-1.png" alt="Landing screen with the Username 1 and Username 2 fields, quick-fill shortcuts and the Battle button" width="800">
+</p>
+
+**The result.** One point per stat, a crown on each winning side, and the final score.
+
+<p align="center">
+  <img src="docs/screenshot-2.png" alt="Result card comparing builderman and Roblox across friends, followers, following and groups, ending 3 to 0" width="800">
+</p>
 
 ## Stack
 
