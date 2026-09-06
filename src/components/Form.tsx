@@ -19,7 +19,7 @@ export default function Form({ battle }: FormProps) {
       action={formAction}
       className="w-full max-w-3xl mx-auto text-center p-8 md:p-10 rounded-2xl border border-slate-800 bg-slate-900/80 shadow-2xl shadow-black/40"
     >
-      <div className="flex flex-col md:flex-row items-stretch md:items-end gap-4 md:gap-0 max-w-2xl mx-auto">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-0 max-w-2xl mx-auto">
         <Input
           name="username1"
           label="Username 1"
@@ -28,7 +28,7 @@ export default function Form({ battle }: FormProps) {
           error={errors.username1}
           disabled={isPending}
         />
-        <span className="font-display font-extrabold text-red-600 mx-0 md:mx-5 text-center md:pb-3.5">
+        <span className="font-display font-extrabold text-red-600 mx-0 md:mx-5 text-center">
           VS
         </span>
         <Input

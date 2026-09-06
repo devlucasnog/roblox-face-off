@@ -20,6 +20,7 @@ type PlayerHeaderProps = {
   yearOfCreation: string;
   gradientColor: keyof typeof gradients;
   side?: "left" | "right";
+  isWinner?: boolean;
 };
 
 export default function PlayerHeader({
@@ -28,6 +29,7 @@ export default function PlayerHeader({
   yearOfCreation,
   gradientColor,
   side = "right",
+  isWinner = false,
 }: PlayerHeaderProps) {
   const sideClasses =
     side === "left" ? "md:flex-row-reverse text-left md:text-right" : "";
@@ -48,7 +50,13 @@ export default function PlayerHeader({
         )}
       </div>
       <div>
-        <div className="font-display font-bold text-xl">{username}</div>
+        <div
+          className={`font-display font-bold text-xl ${
+            isWinner ? "text-amber-400" : ""
+          }`}
+        >
+          {username}
+        </div>
         <div className="text-xs text-slate-400 mt-0.5">{`Since ${yearOfCreation}`}</div>
       </div>
     </div>

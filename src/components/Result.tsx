@@ -4,6 +4,10 @@ import StatBar from "./StatBar";
 import { calculateBattleScore } from "../utils/battleScore";
 import type { PlayerStats } from "../types/player";
 
+/** Seconds before the first stat row reveals, and between each row after it. */
+const REVEAL_BASE = 0.15;
+const REVEAL_STEP = 0.08;
+
 type ResultProps = {
   playerA: PlayerStats;
   playerB: PlayerStats;
@@ -25,6 +29,7 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
           avatarUrl={playerA.avatarUrl}
           yearOfCreation={String(playerA.joinYear)}
           side="right"
+          isWinner={winner === playerA.username}
         />
 
         <div className="font-display font-extrabold text-amber-400 text-sm px-5 py-2 text-center">
@@ -37,6 +42,7 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
           avatarUrl={playerB.avatarUrl}
           yearOfCreation={String(playerB.joinYear)}
           side="left"
+          isWinner={winner === playerB.username}
         />
       </div>
 
@@ -49,6 +55,7 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
               valueA={stat.valueA}
               valueB={stat.valueB}
               showDivider={index > 0}
+              revealDelay={REVEAL_BASE + index * REVEAL_STEP}
             />
           ))}
         </div>
@@ -58,6 +65,7 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
         winner={winner}
         score={{ playerA: scoreA, playerB: scoreB }}
         onReset={onReset}
+        revealDelay={REVEAL_BASE + stats.length * REVEAL_STEP}
       />
     </div>
   );
