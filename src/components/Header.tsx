@@ -16,15 +16,10 @@ export default function Header({ screen }: HederProps) {
       <img src={logo} alt="Roblox Face-Off" className={logoClassName} />
 
       {screen === "form" && (
-        <>
-          <h1 className="font-display font-extrabold text-3xl md:text-5xl leading-tight tracking-tight">
-            Who wins this FACE-OFF?
-          </h1>
-          <p className="mt-4 text-slate-400 text-lg max-w-lg mx-auto">
-            Compare two Roblox players side-by-side: friends, followers, groups,
-            and more.
-          </p>
-        </>
+        <p className="mt-4 text-slate-400 text-lg max-w-lg mx-auto">
+          Compare two Roblox players side-by-side: friends, followers, groups,
+          and more.
+        </p>
       )}
     </header>
   );
