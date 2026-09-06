@@ -1,4 +1,4 @@
-import type { BattleResult } from "../types/player";
+import type { BattleResult, PlayerStats } from "../types/player";
 
 export type BattleStat = {
   label: string;
@@ -10,7 +10,7 @@ export type BattleScore = {
   stats: BattleStat[];
   scoreA: number;
   scoreB: number;
-  winner: string | null;
+  winner: PlayerStats | null;
 };
 
 export function calculateBattleScore({
@@ -48,12 +48,7 @@ export function calculateBattleScore({
     else if (stat.valueB > stat.valueA) scoreB++;
   }
 
-  const winner =
-    scoreA === scoreB
-      ? null
-      : scoreA > scoreB
-        ? playerA.username
-        : playerB.username;
+  const winner = scoreA === scoreB ? null : scoreA > scoreB ? playerA : playerB;
 
   return { stats, scoreA, scoreB, winner };
 }

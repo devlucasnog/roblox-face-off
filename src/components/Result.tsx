@@ -2,6 +2,13 @@ import FinalScore from "./FinalScore";
 import PlayerHeader from "./PlayerHeader";
 import StatBar from "./StatBar";
 import { calculateBattleScore } from "../utils/battleScore";
+import {
+  CARD_BODY,
+  CARD_HEADER,
+  CARD_SHELL,
+  STATS_GRID,
+  VS_BADGE,
+} from "../styles/classes";
 import type { PlayerStats } from "../types/player";
 
 const REVEAL_BASE = 0.15;
@@ -20,33 +27,31 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
   });
 
   return (
-    <div className="w-full max-w-3xl mx-auto shadow-2xl shadow-black/40 rounded-2xl">
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center bg-slate-900 border border-slate-800 rounded-t-2xl overflow-hidden">
+    <div className={CARD_SHELL}>
+      <div className={CARD_HEADER}>
         <PlayerHeader
-          gradientColor="sky"
+          theme="sky"
           username={playerA.username}
           avatarUrl={playerA.avatarUrl}
           yearOfCreation={String(playerA.joinYear)}
           side="right"
-          isWinner={winner === playerA.username}
+          isWinner={winner?.id === playerA.id}
         />
 
-        <div className="font-display font-extrabold text-amber-400 text-sm px-5 py-2 text-center">
-          VS
-        </div>
+        <div className={`${VS_BADGE} text-amber-400`}>VS</div>
 
         <PlayerHeader
-          gradientColor="rose"
+          theme="rose"
           username={playerB.username}
           avatarUrl={playerB.avatarUrl}
           yearOfCreation={String(playerB.joinYear)}
           side="left"
-          isWinner={winner === playerB.username}
+          isWinner={winner?.id === playerB.id}
         />
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 border-t-0 px-6 md:px-8">
-        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4">
+      <div className={CARD_BODY}>
+        <div className={STATS_GRID}>
           {stats.map((stat, index) => (
             <StatBar
               key={stat.label}
@@ -61,7 +66,7 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
       </div>
 
       <FinalScore
-        winner={winner}
+        winner={winner?.username ?? null}
         score={{ playerA: scoreA, playerB: scoreB }}
         onReset={onReset}
         revealDelay={REVEAL_BASE + stats.length * REVEAL_STEP}

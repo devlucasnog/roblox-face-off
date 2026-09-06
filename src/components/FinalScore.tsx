@@ -1,6 +1,8 @@
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 
 import Button from "./Button";
+import { useMotionTiming } from "../hooks/useMotionTiming";
+import { CARD_FOOTER } from "../styles/classes";
 
 type FinalScoreProps = {
   winner: string | null;
@@ -18,18 +20,14 @@ export default function FinalScore({
   onReset,
   revealDelay = 0,
 }: FinalScoreProps) {
-  const shouldReduceMotion = useReducedMotion();
+  const { shouldReduceMotion, timing } = useMotionTiming();
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: shouldReduceMotion ? 0 : 0.3,
-        delay: shouldReduceMotion ? 0 : revealDelay,
-        ease: "easeOut",
-      }}
-      className="bg-slate-800/80 border-t border-slate-700/60 rounded-b-2xl p-9 text-center"
+      transition={{ ...timing(0.3, revealDelay), ease: "easeOut" }}
+      className={`${CARD_FOOTER} text-center`}
     >
       <div className="text-xs text-slate-400 tracking-wide">FINAL SCORE</div>
       <div className="font-display font-extrabold text-4xl md:text-5xl mt-2">
@@ -42,8 +40,7 @@ export default function FinalScore({
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{
-          duration: shouldReduceMotion ? 0 : 0.4,
-          delay: shouldReduceMotion ? 0 : revealDelay + 0.2,
+          ...timing(0.4, revealDelay + 0.2),
           type: shouldReduceMotion ? "tween" : "spring",
           bounce: 0.5,
         }}

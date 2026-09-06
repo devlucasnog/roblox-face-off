@@ -9,12 +9,14 @@ import ResultSkeleton from "./components/ResultSkeleton";
 import { useBattle } from "./hooks/useBattle";
 import type { BattleResult } from "./types/player";
 
+const SCREEN_TRANSITION = { duration: 0.3, ease: "easeOut" } as const;
+
 const screenTransition = {
   layout: true,
   initial: { opacity: 0, scale: 0.96 },
   animate: { opacity: 1, scale: 1 },
   exit: { opacity: 0, scale: 0.96 },
-  transition: { duration: 0.3, ease: "easeOut" },
+  transition: SCREEN_TRANSITION,
 } as const;
 
 function App() {
@@ -37,10 +39,10 @@ function App() {
       <main className="relative flex flex-1 flex-col items-center justify-center px-4 py-16">
         <motion.div
           layout
-          transition={{ duration: 0.3, ease: "easeOut" }}
+          transition={SCREEN_TRANSITION}
           className="relative flex w-full flex-col items-center"
         >
-          <motion.div layout transition={{ duration: 0.3, ease: "easeOut" }}>
+          <motion.div layout transition={SCREEN_TRANSITION}>
             <Header screen={screen} />
           </motion.div>
 
@@ -64,7 +66,16 @@ function App() {
                 ) : battle.showSkeleton ? (
                   <ResultSkeleton />
                 ) : (
-                  <Form battle={battle} />
+                  <Form
+                    usernames={battle.usernames}
+                    errors={battle.errors}
+                    error={battle.error}
+                    isPending={battle.isPending}
+                    formAction={battle.formAction}
+                    onSubmit={battle.onSubmit}
+                    onUsernameChange={battle.setUsername}
+                    onSuggestionClick={battle.addSuggestion}
+                  />
                 )}
               </motion.div>
             </AnimatePresence>

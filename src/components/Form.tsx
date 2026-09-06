@@ -1,26 +1,33 @@
-import { Fragment } from "react";
+import { Fragment, type FormEvent } from "react";
 
 import Button from "./Button";
 import Input from "./Input";
-import type { Battle } from "../hooks/useBattle";
+import { DISABLED } from "../styles/classes";
+import type { BattleFormErrors, UsernameField } from "../hooks/useBattle";
 
 const SUGGESTIONS = ["Builderman", "Shedletsky", "Roblox"];
 
 type FormProps = {
-  battle: Battle;
+  usernames: Record<UsernameField, string>;
+  errors: BattleFormErrors;
+  error?: string;
+  isPending: boolean;
+  formAction: (payload: FormData) => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onUsernameChange: (field: UsernameField, value: string) => void;
+  onSuggestionClick: (username: string) => void;
 };
 
-export default function Form({ battle }: FormProps) {
-  const {
-    usernames,
-    errors,
-    error,
-    isPending,
-    formAction,
-    onSubmit,
-    setUsername,
-  } = battle;
-
+export default function Form({
+  usernames,
+  errors,
+  error,
+  isPending,
+  formAction,
+  onSubmit,
+  onUsernameChange,
+  onSuggestionClick,
+}: FormProps) {
   return (
     <form
       action={formAction}
@@ -33,7 +40,7 @@ export default function Form({ battle }: FormProps) {
           label="Username 1"
           placeholder="Enter a username"
           value={usernames.username1}
-          onChange={(value) => setUsername("username1", value)}
+          onChange={(value) => onUsernameChange("username1", value)}
           error={errors.username1}
           disabled={isPending}
         />
@@ -45,7 +52,7 @@ export default function Form({ battle }: FormProps) {
           label="Username 2"
           placeholder="Enter a username"
           value={usernames.username2}
-          onChange={(value) => setUsername("username2", value)}
+          onChange={(value) => onUsernameChange("username2", value)}
           error={errors.username2}
           disabled={isPending}
         />
@@ -57,8 +64,8 @@ export default function Form({ battle }: FormProps) {
           <Fragment key={suggestion}>
             <button
               type="button"
-              className="text-sky-500 hover:text-sky-400 underline underline-offset-2 mx-1 disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => battle.addSuggestion(suggestion)}
+              className={`text-sky-500 hover:text-sky-400 underline underline-offset-2 mx-1 ${DISABLED}`}
+              onClick={() => onSuggestionClick(suggestion)}
               disabled={isPending}
             >
               {suggestion}

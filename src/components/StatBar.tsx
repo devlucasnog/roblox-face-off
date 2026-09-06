@@ -1,6 +1,7 @@
 import { Fragment } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 
+import { useMotionTiming } from "../hooks/useMotionTiming";
 import { formatCompactNumber } from "../utils/formatNumber";
 
 type StatBarProps = {
@@ -18,7 +19,7 @@ export default function StatBar({
   showDivider,
   revealDelay = 0,
 }: StatBarProps) {
-  const shouldReduceMotion = useReducedMotion();
+  const { timing } = useMotionTiming();
 
   const total = valueA + valueB;
   const percentageA = total === 0 ? 0 : (valueA / total) * 100;
@@ -36,22 +37,15 @@ export default function StatBar({
     </>
   );
 
-  const revealTransition = {
-    duration: shouldReduceMotion ? 0 : 0.3,
-    delay: shouldReduceMotion ? 0 : revealDelay,
-    ease: "easeOut" as const,
-  };
-
   const barTransition = {
-    duration: shouldReduceMotion ? 0 : 0.7,
-    delay: shouldReduceMotion ? 0 : revealDelay + 0.1,
+    ...timing(0.7, revealDelay + 0.1),
     ease: "easeOut" as const,
   };
 
   const reveal = {
     initial: { opacity: 0, y: 8 },
     animate: { opacity: 1, y: 0 },
-    transition: revealTransition,
+    transition: { ...timing(0.3, revealDelay), ease: "easeOut" as const },
   };
 
   return (

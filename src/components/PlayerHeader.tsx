@@ -1,24 +1,23 @@
-const gradients = {
+import { AVATAR_BOX, PLAYER_ROW } from "../styles/classes";
+
+const playerThemes = {
   sky: {
     right: "bg-linear-to-r from-sky-950/60 to-transparent",
     left: "bg-linear-to-l from-sky-950/60 to-transparent",
+    ring: "ring-sky-500/40",
   },
   rose: {
     right: "bg-linear-to-r from-rose-950/60 to-transparent",
     left: "bg-linear-to-l from-rose-950/60 to-transparent",
+    ring: "ring-rose-500/40",
   },
-};
-
-const avatarRings = {
-  sky: "ring-sky-500/40",
-  rose: "ring-rose-500/40",
 };
 
 type PlayerHeaderProps = {
   username: string;
   avatarUrl: string;
   yearOfCreation: string;
-  gradientColor: keyof typeof gradients;
+  theme: keyof typeof playerThemes;
   side?: "left" | "right";
   isWinner?: boolean;
 };
@@ -27,7 +26,7 @@ export default function PlayerHeader({
   username,
   avatarUrl,
   yearOfCreation,
-  gradientColor,
+  theme,
   side = "right",
   isWinner = false,
 }: PlayerHeaderProps) {
@@ -36,10 +35,12 @@ export default function PlayerHeader({
 
   return (
     <div
-      className={`flex items-center gap-4 px-6 md:px-8 py-8 ${gradients[gradientColor][side]} ${sideClasses}`}
+      className={`${PLAYER_ROW} ${playerThemes[theme][side]} ${sideClasses}`}
     >
       <div
-        className={`w-16 h-16 rounded-2xl shrink-0 overflow-hidden ring-2 ${avatarRings[gradientColor]} ${isWinner ? "bg-amber-400" : "bg-slate-800"}`}
+        className={`${AVATAR_BOX} overflow-hidden ring-2 ${playerThemes[theme].ring} ${
+          isWinner ? "bg-amber-400" : "bg-slate-800"
+        }`}
       >
         {avatarUrl && (
           <img

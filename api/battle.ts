@@ -5,6 +5,7 @@ import {
   resolveUsernames,
   RobloxApiError,
 } from "./_lib/roblox.js";
+import { BATTLE_MESSAGES, isSameUsername } from "../src/utils/battleRules.js";
 
 const CACHE_BATTLE = "public, s-maxage=300, stale-while-revalidate=600";
 const CACHE_NOT_FOUND = "public, s-maxage=60";
@@ -16,7 +17,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (typeof username1 !== "string" || typeof username2 !== "string") {
     res.setHeader("Cache-Control", CACHE_NONE);
-    res.status(400).json({ error: "username1 and username2 are required." });
+    res.status(400).json({ error: BATTLE_MESSAGES.missingUsernames });
     return;
   }
 
@@ -25,13 +26,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (!requestedA || !requestedB) {
     res.setHeader("Cache-Control", CACHE_NONE);
-    res.status(400).json({ error: "username1 and username2 are required." });
+    res.status(400).json({ error: BATTLE_MESSAGES.missingUsernames });
     return;
   }
 
-  if (requestedA.toLowerCase() === requestedB.toLowerCase()) {
+  if (isSameUsername(requestedA, requestedB)) {
     res.setHeader("Cache-Control", CACHE_NONE);
-    res.status(400).json({ error: "Choose two different players." });
+    res.status(400).json({ error: BATTLE_MESSAGES.sameUsername });
     return;
   }
 
