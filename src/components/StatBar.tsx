@@ -42,11 +42,11 @@ export default function StatBar({
       <div className="pb-5">
         <div className="h-2 rounded-full bg-slate-800 flex overflow-hidden">
           <div
-            className="bg-blue-500"
+            className="bg-linear-to-r from-blue-600 to-blue-400"
             style={{ width: `${percentageA}%` }}
           ></div>
           <div
-            className="bg-rose-500"
+            className="bg-linear-to-r from-rose-400 to-rose-600"
             style={{ width: `${percentageB}%` }}
           ></div>
         </div>

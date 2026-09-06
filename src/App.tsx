@@ -9,9 +9,14 @@ function App() {
   const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-red-500/20 via-zinc-950 to-zinc-950">
-      <Header />
-      <main>
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-slate-950">
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(220,38,38,0.28),transparent)]"
+        aria-hidden="true"
+      />
+
+      <main className="relative flex flex-1 flex-col items-center justify-center px-4 py-16">
+        <Header />
         {battleResult ? (
           <Result
             playerA={battleResult.playerA}

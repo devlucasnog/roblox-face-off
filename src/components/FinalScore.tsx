@@ -9,7 +9,7 @@ type FinalScoreProps = {
 
 export default function FinalScore({ winner, score, onReset }: FinalScoreProps) {
   return (
-    <div className="bg-slate-800 rounded-b-2xl p-9 text-center">
+    <div className="bg-slate-800/80 border-t border-slate-700/60 rounded-b-2xl p-9 text-center">
       <div className="text-xs text-slate-400 tracking-wide">FINAL SCORE</div>
       <div className="font-display font-extrabold text-4xl md:text-5xl mt-2">
         <span className="text-blue-500">{score.playerA}</span>
@@ -25,7 +25,7 @@ export default function FinalScore({ winner, score, onReset }: FinalScoreProps) 
         <button
           type="button"
           onClick={onReset}
-          className="mt-7 bg-red-600 hover:bg-red-700 transition-colors text-white font-display font-bold text-base px-10 py-3.5 rounded-xl"
+          className="mt-7 bg-red-600 hover:bg-red-700 transition-colors text-white font-display font-bold text-base px-10 py-3.5 rounded-xl shadow-lg shadow-red-950/40"
         >
           New battle!
         </button>

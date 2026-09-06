@@ -13,15 +13,15 @@ export default function Input({
   onChange,
   error,
 }: InputProps) {
-  const inputClasses = `w-full bg-zinc-800 border focus:outline-none rounded-xl px-4 py-3.5 text-white placeholder-zinc-500 ${
+  const inputClasses = `w-full bg-slate-800/80 border focus:outline-none focus:ring-2 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 transition-colors ${
     error
-      ? "border-red-500 focus:border-red-500"
-      : "border-zinc-700 focus:border-sky-500"
+      ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+      : "border-slate-700 focus:border-sky-500 focus:ring-sky-500/20"
   }`;
 
   return (
     <div className="flex-1 text-left">
-      <label htmlFor={name} className="block text-xs text-zinc-400 mb-2">
+      <label htmlFor={name} className="block text-xs text-slate-400 mb-2">
         {label}
       </label>
 

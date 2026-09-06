@@ -48,7 +48,7 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
         : playerB.username;
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="w-full max-w-3xl mx-auto shadow-2xl shadow-black/40 rounded-2xl">
       <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center bg-slate-900 border border-slate-800 rounded-t-2xl overflow-hidden">
         <PlayerHeader
           gradientColor="blue"

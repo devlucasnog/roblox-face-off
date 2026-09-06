@@ -82,7 +82,7 @@ export default function Form({ onBattleComplete }: FormProps) {
   return (
     <form
       action={formAction}
-      className="max-w-3xl mx-auto text-center p-6 rounded-2xl border border-zinc-700 bg-zinc-900/80"
+      className="w-full max-w-3xl mx-auto text-center p-8 md:p-10 rounded-2xl border border-slate-800 bg-slate-900/80 shadow-2xl shadow-black/40"
     >
       <div className="flex flex-col md:flex-row items-stretch md:items-end gap-4 md:gap-0 max-w-2xl mx-auto">
         <Input
@@ -104,7 +104,7 @@ export default function Form({ onBattleComplete }: FormProps) {
         />
       </div>
 
-      <p className="mt-5 text-sm text-zinc-400">
+      <p className="mt-6 text-sm text-slate-400">
         Test with:
         {SUGGESTIONS.map((suggestion, index) => (
           <Fragment key={suggestion}>
@@ -126,7 +126,7 @@ export default function Form({ onBattleComplete }: FormProps) {
 
       <button
         type="submit"
-        className="mt-7 bg-red-600 hover:bg-red-700 transition-colors text-white font-display font-bold text-base px-10 py-3.5 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+        className="mt-7 bg-red-600 hover:bg-red-700 transition-colors text-white font-display font-bold text-base px-10 py-3.5 rounded-xl shadow-lg shadow-red-950/40 disabled:opacity-50 disabled:cursor-not-allowed"
         disabled={isPending}
       >
         {isPending ? "Loading..." : "Battle!"}

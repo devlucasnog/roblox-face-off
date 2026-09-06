@@ -9,6 +9,11 @@ const gradients = {
   },
 };
 
+const avatarRings = {
+  blue: "ring-blue-500/40",
+  rose: "ring-rose-500/40",
+};
+
 type PlayerHeaderProps = {
   username: string;
   avatarUrl: string;
@@ -29,9 +34,11 @@ export default function PlayerHeader({
 
   return (
     <div
-      className={`flex items-center gap-4 px-8 py-7 ${gradients[gradientColor][side]} ${sideClasses}`}
+      className={`flex items-center gap-4 px-6 md:px-8 py-8 ${gradients[gradientColor][side]} ${sideClasses}`}
     >
-      <div className="w-14 h-14 rounded-xl bg-slate-800 flex-shrink-0">
+      <div
+        className={`w-16 h-16 rounded-2xl bg-slate-800 shrink-0 overflow-hidden ring-2 ${avatarRings[gradientColor]}`}
+      >
         <img
           src={avatarUrl}
           alt={username}
