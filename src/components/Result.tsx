@@ -71,15 +71,18 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
         />
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 border-t-0 px-6 md:px-8 divide-y divide-slate-800">
-        {stats.map((stat) => (
-          <StatBar
-            key={stat.label}
-            label={stat.label}
-            valueA={stat.valueA}
-            valueB={stat.valueB}
-          />
-        ))}
+      <div className="bg-slate-900 border border-slate-800 border-t-0 px-6 md:px-8">
+        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4">
+          {stats.map((stat, index) => (
+            <StatBar
+              key={stat.label}
+              label={stat.label}
+              valueA={stat.valueA}
+              valueB={stat.valueB}
+              showDivider={index > 0}
+            />
+          ))}
+        </div>
       </div>
 
       <FinalScore

@@ -1,23 +1,45 @@
+import { Fragment } from "react";
+
+import { formatCompactNumber } from "../utils/formatNumber";
+
 type StatBarProps = {
   label: string;
   valueA: number;
   valueB: number;
+  showDivider: boolean;
 };
 
-export default function StatBar({ label, valueA, valueB }: StatBarProps) {
+export default function StatBar({
+  label,
+  valueA,
+  valueB,
+  showDivider,
+}: StatBarProps) {
   const total = valueA + valueB;
   const percentageA = total === 0 ? 50 : (valueA / total) * 100;
   const percentageB = 100 - percentageA;
 
+  const isAWinner = valueA > valueB;
+  const isBWinner = valueB > valueA;
+
   const crownElement = <span className="text-amber-400">♛</span>;
 
   return (
-    <div className="py-5">
-      <div className="text-center text-xs text-slate-400 mb-2.5">{label}</div>
-      <div className="grid grid-cols-[50px_1fr_50px] md:grid-cols-[60px_1fr_60px] items-center gap-4">
-        <div className="font-display font-bold text-base md:text-xl text-right text-blue-500">
-          {valueA > valueB && crownElement} {valueA}
-        </div>
+    <Fragment>
+      <div
+        className={`col-span-3 text-center text-xs text-slate-400 pt-5 pb-2.5 ${
+          showDivider ? "border-t border-slate-800" : ""
+        }`}
+      >
+        {label}
+      </div>
+
+      <div className="flex items-center justify-between gap-1 whitespace-nowrap pb-5 font-display font-bold text-base md:text-xl text-blue-500">
+        <span className="w-4 text-center">{isAWinner && crownElement}</span>
+        <span>{formatCompactNumber(valueA)}</span>
+      </div>
+
+      <div className="pb-5">
         <div className="h-2 rounded-full bg-slate-800 flex overflow-hidden">
           <div
             className="bg-blue-500"
@@ -28,10 +50,12 @@ export default function StatBar({ label, valueA, valueB }: StatBarProps) {
             style={{ width: `${percentageB}%` }}
           ></div>
         </div>
-        <div className="font-display font-bold text-base md:text-xl text-left text-rose-500">
-          {valueB} {valueB > valueA && crownElement}
-        </div>
       </div>
-    </div>
+
+      <div className="flex items-center justify-between gap-1 whitespace-nowrap pb-5 font-display font-bold text-base md:text-xl text-rose-500">
+        <span>{formatCompactNumber(valueB)}</span>
+        <span className="w-4 text-center">{isBWinner && crownElement}</span>
+      </div>
+    </Fragment>
   );
 }
