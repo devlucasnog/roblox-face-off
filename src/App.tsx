@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
+import Footer from "./components/Footer";
 import Form from "./components/Form";
 import Header from "./components/Header";
 import Result from "./components/Result";
@@ -70,6 +71,8 @@ function App() {
           </div>
         </motion.div>
       </main>
+
+      <Footer />
     </div>
   );
 }
