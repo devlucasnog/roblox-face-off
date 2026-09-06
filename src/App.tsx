@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 
 import Form from "./components/Form";
 import Header from "./components/Header";
@@ -16,16 +17,47 @@ function App() {
       />
 
       <main className="relative flex flex-1 flex-col items-center justify-center px-4 py-16">
-        <Header />
-        {battleResult ? (
-          <Result
-            playerA={battleResult.playerA}
-            playerB={battleResult.playerB}
-            onReset={() => setBattleResult(null)}
-          />
-        ) : (
-          <Form onBattleComplete={setBattleResult} />
-        )}
+        <motion.div
+          layout
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="relative flex w-full flex-col items-center"
+        >
+          <motion.div layout transition={{ duration: 0.3, ease: "easeOut" }}>
+            <Header />
+          </motion.div>
+
+          <AnimatePresence mode="popLayout">
+            {battleResult ? (
+              <motion.div
+                key="result"
+                layout
+                className="w-full flex justify-center"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <Result
+                  playerA={battleResult.playerA}
+                  playerB={battleResult.playerB}
+                  onReset={() => setBattleResult(null)}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="form"
+                layout
+                className="w-full flex justify-center"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <Form onBattleComplete={setBattleResult} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </main>
     </div>
   );
