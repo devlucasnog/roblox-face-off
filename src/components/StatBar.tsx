@@ -24,7 +24,16 @@ export default function StatBar({
   const isAWinner = valueA > valueB;
   const isBWinner = valueB > valueA;
 
-  const crownElement = <span className="text-amber-400">♛</span>;
+  // The glyph alone is read as "queen chess piece" by screen readers, so it is
+  // hidden and paired with text that says what it actually means.
+  const crownElement = (
+    <>
+      <span className="text-amber-400" aria-hidden="true">
+        ♛
+      </span>
+      <span className="sr-only">Winner:</span>
+    </>
+  );
 
   return (
     <Fragment>

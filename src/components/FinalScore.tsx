@@ -1,3 +1,5 @@
+import Button from "./Button";
+
 type FinalScoreProps = {
   winner: string | null;
   score: {
@@ -22,13 +24,9 @@ export default function FinalScore({ winner, score, onReset }: FinalScoreProps) 
       </span>
 
       <p>
-        <button
-          type="button"
-          onClick={onReset}
-          className="mt-7 bg-red-600 hover:bg-red-700 transition-colors text-white font-display font-bold text-base px-10 py-3.5 rounded-xl shadow-lg shadow-red-950/40"
-        >
+        <Button type="button" onClick={onReset} className="mt-7">
           New battle!
-        </button>
+        </Button>
       </p>
     </div>
   );

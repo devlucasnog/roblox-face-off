@@ -1,6 +1,7 @@
 import FinalScore from "./FinalScore";
 import PlayerHeader from "./PlayerHeader";
 import StatBar from "./StatBar";
+import { calculateBattleScore } from "../utils/battleScore";
 import type { PlayerStats } from "../types/player";
 
 type ResultProps = {
@@ -10,42 +11,10 @@ type ResultProps = {
 };
 
 export default function Result({ playerA, playerB, onReset }: ResultProps) {
-  const stats = [
-    {
-      label: "Friends",
-      valueA: playerA.friendsCount,
-      valueB: playerB.friendsCount,
-    },
-    {
-      label: "Followers",
-      valueA: playerA.followersCount,
-      valueB: playerB.followersCount,
-    },
-    {
-      label: "Following",
-      valueA: playerA.followingCount,
-      valueB: playerB.followingCount,
-    },
-    {
-      label: "Groups",
-      valueA: playerA.groupsCount,
-      valueB: playerB.groupsCount,
-    },
-  ];
-
-  let scoreA = 0;
-  let scoreB = 0;
-  for (const stat of stats) {
-    if (stat.valueA > stat.valueB) scoreA++;
-    else if (stat.valueB > stat.valueA) scoreB++;
-  }
-
-  const winner =
-    scoreA === scoreB
-      ? null
-      : scoreA > scoreB
-        ? playerA.username
-        : playerB.username;
+  const { stats, scoreA, scoreB, winner } = calculateBattleScore({
+    playerA,
+    playerB,
+  });
 
   return (
     <div className="w-full max-w-3xl mx-auto shadow-2xl shadow-black/40 rounded-2xl">

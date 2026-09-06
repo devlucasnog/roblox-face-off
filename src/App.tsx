@@ -4,10 +4,23 @@ import { AnimatePresence, motion } from "motion/react";
 import Form from "./components/Form";
 import Header from "./components/Header";
 import Result from "./components/Result";
+import ResultSkeleton from "./components/ResultSkeleton";
+import { useBattle } from "./hooks/useBattle";
 import type { BattleResult } from "./types/player";
+
+const screenTransition = {
+  layout: true,
+  initial: { opacity: 0, scale: 0.96 },
+  animate: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.96 },
+  transition: { duration: 0.3, ease: "easeOut" },
+} as const;
 
 function App() {
   const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
+  const battle = useBattle({ onSuccess: setBattleResult });
+
+  const screen = battleResult ? "result" : battle.isPending ? "loading" : "form";
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-slate-950">
@@ -26,37 +39,31 @@ function App() {
             <Header />
           </motion.div>
 
-          <AnimatePresence mode="popLayout">
-            {battleResult ? (
+          <div
+            className="w-full"
+            aria-live="polite"
+            aria-busy={battle.isPending}
+          >
+            <AnimatePresence mode="popLayout">
               <motion.div
-                key="result"
-                layout
+                key={screen}
+                {...screenTransition}
                 className="w-full flex justify-center"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
               >
-                <Result
-                  playerA={battleResult.playerA}
-                  playerB={battleResult.playerB}
-                  onReset={() => setBattleResult(null)}
-                />
+                {battleResult ? (
+                  <Result
+                    playerA={battleResult.playerA}
+                    playerB={battleResult.playerB}
+                    onReset={() => setBattleResult(null)}
+                  />
+                ) : battle.isPending ? (
+                  <ResultSkeleton />
+                ) : (
+                  <Form battle={battle} />
+                )}
               </motion.div>
-            ) : (
-              <motion.div
-                key="form"
-                layout
-                className="w-full flex justify-center"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              >
-                <Form onBattleComplete={setBattleResult} />
-              </motion.div>
-            )}
-          </AnimatePresence>
+            </AnimatePresence>
+          </div>
         </motion.div>
       </main>
     </div>

@@ -1,107 +1,18 @@
-import { Fragment, useActionState, useState } from "react";
+import { Fragment } from "react";
 
+import Button from "./Button";
 import Input from "./Input";
-import type { BattleResult } from "../types/player";
+import type { Battle } from "../hooks/useBattle";
 
 const SUGGESTIONS = ["Builderman", "Shedletsky", "Roblox"];
 
-type FormErrors = {
-  username1?: string;
-  username2?: string;
-};
-
-type BattleState = {
-  success: boolean;
-  error?: string;
-};
-
 type FormProps = {
-  onBattleComplete: (result: BattleResult) => void;
+  battle: Battle;
 };
 
-export default function Form({ onBattleComplete }: FormProps) {
-  const [username1, setUsername1] = useState("");
-  const [username2, setUsername2] = useState("");
-  const [errors, setErrors] = useState<FormErrors>({});
-
-  async function startBattle(): Promise<BattleState> {
-    const trimmedUsername1 = username1.trim();
-    const trimmedUsername2 = username2.trim();
-
-    const newErrors: FormErrors = {};
-    if (!trimmedUsername1)
-      newErrors.username1 = "The Username 1 field is required.";
-    if (!trimmedUsername2)
-      newErrors.username2 = "The Username 2 field is required.";
-
-    if (
-      trimmedUsername1 &&
-      trimmedUsername1.toLowerCase() === trimmedUsername2.toLowerCase()
-    ) {
-      newErrors.username2 = "Choose two different players.";
-    }
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length > 0) {
-      return { success: false };
-    }
-
-    const params = new URLSearchParams({
-      username1: trimmedUsername1,
-      username2: trimmedUsername2,
-    });
-
-    try {
-      const response = await fetch(`/api/battle?${params.toString()}`);
-
-      // A crashing function or a proxy error can answer with HTML instead of
-      // JSON, so parsing has to be allowed to fail without breaking the action.
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        return {
-          success: false,
-          error: data?.error ?? "Something went wrong. Please try again.",
-        };
-      }
-
-      if (!data) {
-        return { success: false, error: "Unexpected response from the server." };
-      }
-
-      onBattleComplete(data as BattleResult);
-
-      return { success: true };
-    } catch {
-      return {
-        success: false,
-        error: "Could not reach the server. Check your connection and try again.",
-      };
-    }
-  }
-
-  const [state, formAction, isPending] = useActionState(startBattle, {
-    success: false,
-  });
-
-  function handleUsername1Change(value: string) {
-    setUsername1(value);
-    setErrors((prev) => ({ ...prev, username1: undefined }));
-  }
-
-  function handleUsername2Change(value: string) {
-    setUsername2(value);
-    setErrors((prev) => ({ ...prev, username2: undefined }));
-  }
-
-  function handleAddSuggestion(username: string) {
-    if (!username1) {
-      handleUsername1Change(username);
-    } else {
-      handleUsername2Change(username);
-    }
-  }
+export default function Form({ battle }: FormProps) {
+  const { usernames, errors, error, isPending, formAction, setUsername } =
+    battle;
 
   return (
     <form
@@ -112,8 +23,8 @@ export default function Form({ onBattleComplete }: FormProps) {
         <Input
           name="username1"
           label="Username 1"
-          value={username1}
-          onChange={handleUsername1Change}
+          value={usernames.username1}
+          onChange={(value) => setUsername("username1", value)}
           error={errors.username1}
           disabled={isPending}
         />
@@ -123,8 +34,8 @@ export default function Form({ onBattleComplete }: FormProps) {
         <Input
           name="username2"
           label="Username 2"
-          value={username2}
-          onChange={handleUsername2Change}
+          value={usernames.username2}
+          onChange={(value) => setUsername("username2", value)}
           error={errors.username2}
           disabled={isPending}
         />
@@ -137,27 +48,25 @@ export default function Form({ onBattleComplete }: FormProps) {
             <button
               type="button"
               className="text-sky-500 hover:text-sky-400 underline underline-offset-2 mx-1 disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => handleAddSuggestion(suggestion)}
+              onClick={() => battle.addSuggestion(suggestion)}
               disabled={isPending}
             >
               {suggestion}
             </button>
-            {index < 2 && "·"}
+            {index < SUGGESTIONS.length - 1 && "·"}
           </Fragment>
         ))}
       </p>
 
-      {state.error && (
-        <p className="mt-4 text-sm text-red-500">{state.error}</p>
+      {error && (
+        <p role="alert" className="mt-4 text-sm text-red-500">
+          {error}
+        </p>
       )}
 
-      <button
-        type="submit"
-        className="mt-7 bg-red-600 hover:bg-red-700 transition-colors text-white font-display font-bold text-base px-10 py-3.5 rounded-xl shadow-lg shadow-red-950/40 disabled:opacity-50 disabled:cursor-not-allowed"
-        disabled={isPending}
-      >
+      <Button type="submit" className="mt-7" disabled={isPending}>
         {isPending ? "Loading..." : "Battle!"}
-      </button>
+      </Button>
     </form>
   );
 }
