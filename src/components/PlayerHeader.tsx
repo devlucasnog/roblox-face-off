@@ -39,7 +39,7 @@ export default function PlayerHeader({
       className={`flex items-center gap-4 px-6 md:px-8 py-8 ${gradients[gradientColor][side]} ${sideClasses}`}
     >
       <div
-        className={`w-16 h-16 rounded-2xl bg-slate-800 shrink-0 overflow-hidden ring-2 ${avatarRings[gradientColor]}`}
+        className={`w-16 h-16 rounded-2xl shrink-0 overflow-hidden ring-2 ${avatarRings[gradientColor]} ${isWinner ? "bg-amber-400" : "bg-slate-800"}`}
       >
         {avatarUrl && (
           <img

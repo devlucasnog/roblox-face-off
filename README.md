@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="src/assets/logo.png" alt="Roblox Face-Off" width="420">
+</p>
+
 # Roblox Face-Off
 
 Compare two Roblox players side by side and see who wins the face-off. Type two
@@ -52,6 +56,16 @@ while still returning valid JSON. Without checking `response.ok`, a missing
 field silently falls back to `0` and the UI confidently displays wrong numbers.
 `fetchJson` in `api/_lib/roblox.ts` turns those into real errors instead.
 
+**Why the function sets `Cache-Control`.**
+Every battle costs 13 requests to Roblox (1 lookup + 6 per player), and Roblox
+rate-limits aggressively — under load the extra traffic turns into 502s. The
+response carries `s-maxage=300, stale-while-revalidate=600`, so Vercel's CDN
+serves a repeated matchup from the edge for 5 minutes and keeps answering from
+the stale copy for another 10 while it revalidates in the background. Player
+counts move slowly, so the staleness is invisible. Validation errors and 502s
+are sent `no-store`; a 404 is cached for only 60s, since the username may exist
+tomorrow.
+
 **Why `mode="popLayout"` on `AnimatePresence`.**
 The form and the result card have different heights, so swapping them moves the
 header. With the default `mode="wait"` the outgoing card holds its space until
@@ -77,5 +91,6 @@ src/
 - **Badges are not shown.** `badges.roblox.com` started requiring
   authentication (`401 Authentication token is missing`), and there is no public
   alternative, so the badge count was replaced by the "Following" stat.
-- **No caching.** Every battle makes 12 requests to Roblox (6 per player).
-  Roblox rate-limits aggressively, so heavy use can hit a 502.
+- **Stats can be up to 5 minutes stale.** The trade-off of the CDN cache
+  described above: a battle replayed within that window is served from the edge
+  instead of hitting Roblox again.

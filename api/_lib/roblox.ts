@@ -9,26 +9,68 @@ export type ResolvedUser = {
   requestedUsername: string;
   id: number;
   name: string;
+  displayName: string;
+  hasVerifiedBadge: boolean;
 };
 
-async function fetchJson(url: string, init?: RequestInit) {
+type UsernamesResponse = {
+  data: ResolvedUser[];
+};
+
+type UserDetailsResponse = {
+  id: number;
+  name: string;
+  displayName: string;
+  description: string;
+  created: string;
+  isBanned: boolean;
+  hasVerifiedBadge: boolean;
+};
+
+type CountResponse = {
+  count: number;
+};
+
+type GroupMembership = {
+  group: { id: number; name: string; memberCount: number };
+  role: { id: number; name: string; rank: number };
+};
+
+type GroupsResponse = {
+  data: GroupMembership[];
+};
+
+type Thumbnail = {
+  targetId: number;
+  state: "Completed" | "Pending" | "Blocked" | "Error";
+  imageUrl: string;
+};
+
+type ThumbnailsResponse = {
+  data: Thumbnail[];
+};
+
+async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, init);
 
   if (!response.ok) {
     throw new Error(`Roblox request failed (${response.status}): ${url}`);
   }
 
-  return response.json();
+  return (await response.json()) as T;
 }
 
 export async function resolveUsernames(
   usernames: string[],
 ): Promise<ResolvedUser[]> {
-  const { data } = (await fetchJson(`${USERS_API}/usernames/users`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ usernames, excludeBannedUsers: true }),
-  })) as { data: ResolvedUser[] };
+  const { data } = await fetchJson<UsernamesResponse>(
+    `${USERS_API}/usernames/users`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usernames, excludeBannedUsers: true }),
+    },
+  );
 
   return data;
 }
@@ -39,29 +81,39 @@ export async function fetchPlayerStats(
 ): Promise<PlayerStats> {
   const [user, friends, followers, following, groups, avatar] =
     await Promise.all([
-      fetchJson(`${USERS_API}/users/${userId}`),
-      fetchJson(`${FRIENDS_API}/users/${userId}/friends/count`),
-      fetchJson(`${FRIENDS_API}/users/${userId}/followers/count`),
-      fetchJson(`${FRIENDS_API}/users/${userId}/followings/count`),
-      fetchJson(`${GROUPS_API}/users/${userId}/groups/roles`),
-      fetchJson(
+      fetchJson<UserDetailsResponse>(`${USERS_API}/users/${userId}`),
+      fetchJson<CountResponse>(`${FRIENDS_API}/users/${userId}/friends/count`),
+      fetchJson<CountResponse>(
+        `${FRIENDS_API}/users/${userId}/followers/count`,
+      ),
+      fetchJson<CountResponse>(
+        `${FRIENDS_API}/users/${userId}/followings/count`,
+      ),
+      fetchJson<GroupsResponse>(`${GROUPS_API}/users/${userId}/groups/roles`),
+      fetchJson<ThumbnailsResponse>(
         `${THUMBNAILS_API}/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png`,
       ),
     ]);
 
-  const createdAt = new Date(user.created as string);
+  const createdAt = new Date(user.created);
   if (Number.isNaN(createdAt.getTime())) {
-    throw new Error(`Roblox returned an invalid creation date for ${username}.`);
+    throw new Error(
+      `Roblox returned an invalid creation date for ${username}.`,
+    );
   }
+
+  const headshot = avatar.data.find(
+    (thumbnail) => thumbnail.targetId === userId,
+  );
 
   return {
     id: userId,
     username,
     joinYear: createdAt.getFullYear(),
-    avatarUrl: avatar.data?.[0]?.imageUrl ?? "",
-    friendsCount: friends.count ?? 0,
-    followersCount: followers.count ?? 0,
-    followingCount: following.count ?? 0,
-    groupsCount: groups.data?.length ?? 0,
+    avatarUrl: headshot?.state === "Completed" ? headshot.imageUrl : "",
+    friendsCount: friends.count,
+    followersCount: followers.count,
+    followingCount: following.count,
+    groupsCount: groups.data.length,
   };
 }

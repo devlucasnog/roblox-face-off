@@ -23,6 +23,7 @@ const INITIAL_USERNAMES: Record<UsernameField, string> = {
 export function useBattle({ onSuccess }: UseBattleOptions) {
   const [usernames, setUsernames] = useState(INITIAL_USERNAMES);
   const [errors, setErrors] = useState<BattleFormErrors>({});
+  const [isFetching, setIsFetching] = useState(false);
 
   async function startBattle(): Promise<BattleState> {
     const username1 = usernames.username1.trim();
@@ -44,6 +45,8 @@ export function useBattle({ onSuccess }: UseBattleOptions) {
 
     const params = new URLSearchParams({ username1, username2 });
 
+    setIsFetching(true);
+
     try {
       const response = await fetch(`/api/battle?${params.toString()}`);
 
@@ -57,7 +60,10 @@ export function useBattle({ onSuccess }: UseBattleOptions) {
       }
 
       if (!data) {
-        return { success: false, error: "Unexpected response from the server." };
+        return {
+          success: false,
+          error: "Unexpected response from the server.",
+        };
       }
 
       onSuccess(data as BattleResult);
@@ -69,10 +75,12 @@ export function useBattle({ onSuccess }: UseBattleOptions) {
         error:
           "Could not reach the server. Check your connection and try again.",
       };
+    } finally {
+      setIsFetching(false);
     }
   }
 
-  const [state, formAction, isPending] = useActionState(startBattle, {
+  const [state, formAction] = useActionState(startBattle, {
     success: false,
   });
 
@@ -89,7 +97,7 @@ export function useBattle({ onSuccess }: UseBattleOptions) {
     usernames,
     errors,
     error: state.error,
-    isPending,
+    isPending: isFetching,
     formAction,
     setUsername,
     addSuggestion,
