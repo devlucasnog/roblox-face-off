@@ -1,0 +1,13 @@
+export default function Header() {
+  return (
+    <header className="max-w-3xl mx-auto px-6 pt-4 pb-20 text-center">
+      <h1 className="font-display font-extrabold text-4xl md:text-6xl leading-tight tracking-tight">
+        Who wins this <span className="text-red-600">FACE-OFF</span>?
+      </h1>
+      <p className="mt-4 text-zinc-400 text-lg max-w-md mx-auto">
+        Compare two Roblox players side-by-side: friends, badges, groups, and
+        more.
+      </p>
+    </header>
+  );
+}
