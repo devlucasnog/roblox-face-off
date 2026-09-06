@@ -8,7 +8,6 @@ type StatBarProps = {
   valueA: number;
   valueB: number;
   showDivider: boolean;
-  /** Seconds to wait before this row reveals, so rows cascade one by one. */
   revealDelay?: number;
 };
 
@@ -21,8 +20,6 @@ export default function StatBar({
 }: StatBarProps) {
   const shouldReduceMotion = useReducedMotion();
 
-  // With no data on either side the track stays empty, instead of two half
-  // bars that would look like both players scored the same real value.
   const total = valueA + valueB;
   const percentageA = total === 0 ? 0 : (valueA / total) * 100;
   const percentageB = total === 0 ? 0 : 100 - percentageA;
@@ -30,8 +27,6 @@ export default function StatBar({
   const isAWinner = valueA > valueB;
   const isBWinner = valueB > valueA;
 
-  // The glyph alone is read as "queen chess piece" by screen readers, so it is
-  // hidden and paired with text that says what it actually means.
   const crownElement = (
     <>
       <span className="text-amber-400" aria-hidden="true">
@@ -47,7 +42,6 @@ export default function StatBar({
     ease: "easeOut" as const,
   };
 
-  // The bars start filling just after their row has landed.
   const barTransition = {
     duration: shouldReduceMotion ? 0 : 0.7,
     delay: shouldReduceMotion ? 0 : revealDelay + 0.1,
@@ -73,18 +67,16 @@ export default function StatBar({
 
       <motion.div
         {...reveal}
-        className="flex items-center justify-between gap-1 whitespace-nowrap pb-5 font-display font-bold text-base md:text-xl text-blue-500"
+        className="flex items-center justify-between gap-1 whitespace-nowrap pb-5 font-display font-bold text-base md:text-xl text-sky-500"
       >
         <span className="w-4 text-center">{isAWinner && crownElement}</span>
         <span>{formatCompactNumber(valueA)}</span>
       </motion.div>
 
       <motion.div {...reveal} className="pb-5">
-        {/* Each side grows from its own edge towards the middle, so the two
-            players visibly push against each other. */}
         <div className="relative h-2 rounded-full bg-slate-800 overflow-hidden">
           <motion.div
-            className="absolute inset-y-0 left-0 bg-linear-to-r from-blue-600 to-blue-400"
+            className="absolute inset-y-0 left-0 bg-linear-to-r from-sky-600 to-sky-400"
             initial={{ width: 0 }}
             animate={{ width: `${percentageA}%` }}
             transition={barTransition}

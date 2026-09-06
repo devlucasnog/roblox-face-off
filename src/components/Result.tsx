@@ -4,7 +4,6 @@ import StatBar from "./StatBar";
 import { calculateBattleScore } from "../utils/battleScore";
 import type { PlayerStats } from "../types/player";
 
-/** Seconds before the first stat row reveals, and between each row after it. */
 const REVEAL_BASE = 0.15;
 const REVEAL_STEP = 0.08;
 
@@ -24,7 +23,7 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
     <div className="w-full max-w-3xl mx-auto shadow-2xl shadow-black/40 rounded-2xl">
       <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center bg-slate-900 border border-slate-800 rounded-t-2xl overflow-hidden">
         <PlayerHeader
-          gradientColor="blue"
+          gradientColor="sky"
           username={playerA.username}
           avatarUrl={playerA.avatarUrl}
           yearOfCreation={String(playerA.joinYear)}

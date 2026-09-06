@@ -20,12 +20,16 @@ function App() {
   const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
   const battle = useBattle({ onSuccess: setBattleResult });
 
-  const screen = battleResult ? "result" : battle.isPending ? "loading" : "form";
+  const screen = battleResult
+    ? "result"
+    : battle.isPending
+      ? "loading"
+      : "form";
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-slate-950">
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(220,38,38,0.28),transparent)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_1100px_480px_at_50%_-5%,rgba(220,38,38,0.28),transparent)]"
         aria-hidden="true"
       />
 
@@ -36,7 +40,7 @@ function App() {
           className="relative flex w-full flex-col items-center"
         >
           <motion.div layout transition={{ duration: 0.3, ease: "easeOut" }}>
-            <Header />
+            <Header screen={screen} />
           </motion.div>
 
           <div

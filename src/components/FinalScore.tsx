@@ -9,7 +9,6 @@ type FinalScoreProps = {
     playerB: number;
   };
   onReset: () => void;
-  /** Seconds to wait before revealing, so it lands after the stat rows. */
   revealDelay?: number;
 };
 
@@ -34,12 +33,11 @@ export default function FinalScore({
     >
       <div className="text-xs text-slate-400 tracking-wide">FINAL SCORE</div>
       <div className="font-display font-extrabold text-4xl md:text-5xl mt-2">
-        <span className="text-blue-500">{score.playerA}</span>
+        <span className="text-sky-500">{score.playerA}</span>
         <span className="mx-3">×</span>
         <span className="text-rose-500">{score.playerB}</span>
       </div>
 
-      {/* The badge pops in once the score is already on screen. */}
       <motion.span
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}

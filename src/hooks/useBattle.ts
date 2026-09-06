@@ -20,11 +20,6 @@ const INITIAL_USERNAMES: Record<UsernameField, string> = {
   username2: "",
 };
 
-/**
- * Owns everything behind the battle form: the two usernames, their validation
- * errors and the request to `/api/battle`. Components using it stay purely
- * presentational.
- */
 export function useBattle({ onSuccess }: UseBattleOptions) {
   const [usernames, setUsernames] = useState(INITIAL_USERNAMES);
   const [errors, setErrors] = useState<BattleFormErrors>({});
@@ -37,8 +32,6 @@ export function useBattle({ onSuccess }: UseBattleOptions) {
     if (!username1) newErrors.username1 = "The Username 1 field is required.";
     if (!username2) newErrors.username2 = "The Username 2 field is required.";
 
-    // Roblox resolves the same username twice to a single player, which would
-    // produce a battle against itself that ties on every stat.
     if (username1 && username1.toLowerCase() === username2.toLowerCase()) {
       newErrors.username2 = "Choose two different players.";
     }
@@ -54,8 +47,6 @@ export function useBattle({ onSuccess }: UseBattleOptions) {
     try {
       const response = await fetch(`/api/battle?${params.toString()}`);
 
-      // A crashing function or a proxy error can answer with HTML instead of
-      // JSON, so parsing has to be allowed to fail without breaking the action.
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
@@ -90,7 +81,6 @@ export function useBattle({ onSuccess }: UseBattleOptions) {
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   }
 
-  /** Fills the first field, then always replaces the second one. */
   function addSuggestion(username: string) {
     setUsername(usernames.username1 ? "username2" : "username1", username);
   }

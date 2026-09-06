@@ -1,7 +1,7 @@
 const gradients = {
-  blue: {
-    right: "bg-linear-to-r from-blue-950/60 to-transparent",
-    left: "bg-linear-to-l from-blue-950/60 to-transparent",
+  sky: {
+    right: "bg-linear-to-r from-sky-950/60 to-transparent",
+    left: "bg-linear-to-l from-sky-950/60 to-transparent",
   },
   rose: {
     right: "bg-linear-to-r from-rose-950/60 to-transparent",
@@ -10,7 +10,7 @@ const gradients = {
 };
 
 const avatarRings = {
-  blue: "ring-blue-500/40",
+  sky: "ring-sky-500/40",
   rose: "ring-rose-500/40",
 };
 

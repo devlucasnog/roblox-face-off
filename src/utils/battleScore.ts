@@ -10,14 +10,9 @@ export type BattleScore = {
   stats: BattleStat[];
   scoreA: number;
   scoreB: number;
-  /** `null` when both players win the same number of stats. */
   winner: string | null;
 };
 
-/**
- * Decides the battle: each stat is a point for whoever has the higher value,
- * and ties on a stat award no point to either side.
- */
 export function calculateBattleScore({
   playerA,
   playerB,

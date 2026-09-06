@@ -5,6 +5,7 @@ type InputProps = {
   onChange: (value: string) => void;
   error?: string;
   disabled?: boolean;
+  placeholder?: string;
 };
 
 export default function Input({
@@ -14,6 +15,7 @@ export default function Input({
   onChange,
   error,
   disabled = false,
+  placeholder,
 }: InputProps) {
   const inputClasses = `w-full bg-slate-800/80 border focus:outline-none focus:ring-2 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
     error
@@ -34,6 +36,7 @@ export default function Input({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         disabled={disabled}
+        placeholder={placeholder}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${name}-error` : undefined}
         className={inputClasses}

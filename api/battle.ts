@@ -18,8 +18,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  // Roblox de-duplicates the lookup below, so the same username twice would
-  // resolve to a single user battling itself and tie on every stat.
   if (requestedA.toLowerCase() === requestedB.toLowerCase()) {
     res.status(400).json({ error: "Choose two different players." });
     return;
@@ -37,8 +35,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const userA = findUser(requestedA);
     const userB = findUser(requestedB);
 
-    // A username is missing when it does not exist or belongs to a banned
-    // account, which `excludeBannedUsers` filters out of the response.
     if (!userA || !userB) {
       const notFound = [
         userA ? null : requestedA,

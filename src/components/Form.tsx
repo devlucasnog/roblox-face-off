@@ -23,17 +23,19 @@ export default function Form({ battle }: FormProps) {
         <Input
           name="username1"
           label="Username 1"
+          placeholder="Enter a username"
           value={usernames.username1}
           onChange={(value) => setUsername("username1", value)}
           error={errors.username1}
           disabled={isPending}
         />
-        <span className="font-display font-extrabold text-red-600 mx-0 md:mx-5 text-center">
+        <span className="font-display font-extrabold text-amber-400 mx-0 md:mx-5 text-center">
           VS
         </span>
         <Input
           name="username2"
           label="Username 2"
+          placeholder="Enter a username"
           value={usernames.username2}
           onChange={(value) => setUsername("username2", value)}
           error={errors.username2}

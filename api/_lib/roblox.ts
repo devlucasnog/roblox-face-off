@@ -11,11 +11,6 @@ export type ResolvedUser = {
   name: string;
 };
 
-/**
- * Roblox answers a failed request with `{ errors: [...] }` and a non-2xx status.
- * Without this check the missing field would silently fall back to `0` in the
- * stats below, showing wrong data as if it were real.
- */
 async function fetchJson(url: string, init?: RequestInit) {
   const response = await fetch(url, init);
 
@@ -26,7 +21,6 @@ async function fetchJson(url: string, init?: RequestInit) {
   return response.json();
 }
 
-/** Resolves usernames to user ids in a single batched request. */
 export async function resolveUsernames(
   usernames: string[],
 ): Promise<ResolvedUser[]> {
@@ -39,7 +33,6 @@ export async function resolveUsernames(
   return data;
 }
 
-/** Fans out to every stat endpoint for a single player, in parallel. */
 export async function fetchPlayerStats(
   userId: number,
   username: string,
