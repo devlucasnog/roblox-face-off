@@ -1,4 +1,12 @@
-export default function FinalScore({ winner, score }) {
+type FinalScoreProps = {
+  winner: string;
+  score: {
+    playerA: number;
+    playerB: number;
+  };
+};
+
+export default function FinalScore({ winner, score }: FinalScoreProps) {
   return (
     <div className="bg-slate-800 rounded-b-2xl p-9 text-center">
       <div className="text-xs text-slate-400 tracking-wide">FINAL SCORE</div>

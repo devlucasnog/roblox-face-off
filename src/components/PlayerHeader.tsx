@@ -9,12 +9,19 @@ const gradients = {
   },
 };
 
+type PlayerHeaderProps = {
+  username: string;
+  yearOfCreation: string;
+  gradientColor: keyof typeof gradients;
+  side?: "left" | "right";
+};
+
 export default function PlayerHeader({
   username,
   yearOfCreation,
   gradientColor,
   side = "right",
-}) {
+}: PlayerHeaderProps) {
   const sideClasses =
     side === "left"
       ? "md:flex-row-reverse text-left md:text-right"

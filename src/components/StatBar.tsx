@@ -1,6 +1,12 @@
-export default function StatBar({ label, valueA, valueB }) {
+type StatBarProps = {
+  label: string;
+  valueA: number;
+  valueB: number;
+};
+
+export default function StatBar({ label, valueA, valueB }: StatBarProps) {
   const total = valueA + valueB;
-  const percentageA = total === 0 ? 50 : ((valueA / total) * 100).toFixed(0);
+  const percentageA = total === 0 ? 50 : (valueA / total) * 100;
   const percentageB = 100 - percentageA;
 
   const crownElement = <span className="text-amber-400">♛</span>;

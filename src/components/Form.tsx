@@ -4,7 +4,14 @@ import Input from "./Input";
 
 const SUGGESTIONS = ["Builderman", "Shedletsky", "Roblox"];
 
-async function startBattle(_, formData) {
+type BattleState = {
+  success: boolean;
+};
+
+async function startBattle(
+  _prevState: BattleState,
+  formData: FormData,
+): Promise<BattleState> {
   const data = Object.fromEntries(formData.entries());
   console.log(data);
 
@@ -12,12 +19,12 @@ async function startBattle(_, formData) {
 }
 
 export default function Form() {
-  const [state, formAction, isPending] = useActionState(startBattle, {
+  const [, formAction, isPending] = useActionState(startBattle, {
     success: false,
   });
 
-  function handleAddSuggestion(username) {
-    console.log(state);
+  function handleAddSuggestion(username: string) {
+    console.log(username);
   }
 
   return (

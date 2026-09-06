@@ -1,4 +1,9 @@
-export default function Input({ label, name }) {
+type InputProps = {
+  label: string;
+  name: string;
+};
+
+export default function Input({ label, name }: InputProps) {
   return (
     <div className="flex-1 text-left">
       <label htmlFor={name} className="block text-xs text-zinc-400 mb-2">
