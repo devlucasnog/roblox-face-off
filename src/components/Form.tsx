@@ -34,6 +34,13 @@ export default function Form({ onBattleComplete }: FormProps) {
     if (!trimmedUsername2)
       newErrors.username2 = "The Username 2 field is required.";
 
+    if (
+      trimmedUsername1 &&
+      trimmedUsername1.toLowerCase() === trimmedUsername2.toLowerCase()
+    ) {
+      newErrors.username2 = "Choose two different players.";
+    }
+
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
@@ -45,16 +52,33 @@ export default function Form({ onBattleComplete }: FormProps) {
       username2: trimmedUsername2,
     });
 
-    const response = await fetch(`/api/battle?${params.toString()}`);
-    const data = await response.json();
+    try {
+      const response = await fetch(`/api/battle?${params.toString()}`);
 
-    if (!response.ok) {
-      return { success: false, error: data.error ?? "Something went wrong." };
+      // A crashing function or a proxy error can answer with HTML instead of
+      // JSON, so parsing has to be allowed to fail without breaking the action.
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data?.error ?? "Something went wrong. Please try again.",
+        };
+      }
+
+      if (!data) {
+        return { success: false, error: "Unexpected response from the server." };
+      }
+
+      onBattleComplete(data as BattleResult);
+
+      return { success: true };
+    } catch {
+      return {
+        success: false,
+        error: "Could not reach the server. Check your connection and try again.",
+      };
     }
-
-    onBattleComplete(data as BattleResult);
-
-    return { success: true };
   }
 
   const [state, formAction, isPending] = useActionState(startBattle, {
@@ -91,6 +115,7 @@ export default function Form({ onBattleComplete }: FormProps) {
           value={username1}
           onChange={handleUsername1Change}
           error={errors.username1}
+          disabled={isPending}
         />
         <span className="font-display font-extrabold text-red-600 mx-0 md:mx-5 text-center md:pb-3.5">
           VS
@@ -101,6 +126,7 @@ export default function Form({ onBattleComplete }: FormProps) {
           value={username2}
           onChange={handleUsername2Change}
           error={errors.username2}
+          disabled={isPending}
         />
       </div>
 
@@ -110,8 +136,9 @@ export default function Form({ onBattleComplete }: FormProps) {
           <Fragment key={suggestion}>
             <button
               type="button"
-              className="text-sky-500 hover:text-sky-400 underline underline-offset-2 mx-1"
+              className="text-sky-500 hover:text-sky-400 underline underline-offset-2 mx-1 disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => handleAddSuggestion(suggestion)}
+              disabled={isPending}
             >
               {suggestion}
             </button>

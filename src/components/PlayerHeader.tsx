@@ -39,11 +39,13 @@ export default function PlayerHeader({
       <div
         className={`w-16 h-16 rounded-2xl bg-slate-800 shrink-0 overflow-hidden ring-2 ${avatarRings[gradientColor]}`}
       >
-        <img
-          src={avatarUrl}
-          alt={username}
-          className="w-full h-full object-cover"
-        />
+        {avatarUrl && (
+          <img
+            src={avatarUrl}
+            alt={username}
+            className="w-full h-full object-cover"
+          />
+        )}
       </div>
       <div>
         <div className="font-display font-bold text-xl">{username}</div>

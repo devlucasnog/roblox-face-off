@@ -4,7 +4,6 @@ import type { PlayerStats } from "../src/types/player";
 
 const USERS_API = "https://users.roblox.com/v1";
 const FRIENDS_API = "https://friends.roblox.com/v1";
-const BADGES_API = "https://badges.roblox.com/v1";
 const GROUPS_API = "https://groups.roblox.com/v1";
 const THUMBNAILS_API = "https://thumbnails.roblox.com/v1";
 
@@ -14,18 +13,28 @@ type ResolvedUser = {
   name: string;
 };
 
+/**
+ * Roblox answers a failed request with `{ errors: [...] }` and a non-2xx status.
+ * Without this check the missing field would silently fall back to `0` further
+ * down, showing wrong stats as if they were real.
+ */
+async function fetchJson(url: string, init?: RequestInit) {
+  const response = await fetch(url, init);
+
+  if (!response.ok) {
+    throw new Error(`Roblox request failed (${response.status}): ${url}`);
+  }
+
+  return response.json();
+}
+
 async function resolveUsernames(usernames: string[]): Promise<ResolvedUser[]> {
-  const response = await fetch(`${USERS_API}/usernames/users`, {
+  const { data } = (await fetchJson(`${USERS_API}/usernames/users`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ usernames, excludeBannedUsers: true }),
-  });
+  })) as { data: ResolvedUser[] };
 
-  if (!response.ok) {
-    throw new Error("Failed to resolve usernames.");
-  }
-
-  const { data } = (await response.json()) as { data: ResolvedUser[] };
   return data;
 }
 
@@ -33,46 +42,36 @@ async function fetchPlayerStats(
   userId: number,
   username: string,
 ): Promise<PlayerStats> {
-  const [userRes, friendsRes, followersRes, badgesRes, groupsRes, avatarRes] =
+  const [user, friends, followers, following, groups, avatar] =
     await Promise.all([
-      fetch(`${USERS_API}/users/${userId}`),
-      fetch(`${FRIENDS_API}/users/${userId}/friends/count`),
-      fetch(`${FRIENDS_API}/users/${userId}/followers/count`),
-      fetch(`${BADGES_API}/users/${userId}/badges?limit=100&sortOrder=Desc`),
-      fetch(`${GROUPS_API}/users/${userId}/groups/roles`),
-      fetch(
+      fetchJson(`${USERS_API}/users/${userId}`),
+      fetchJson(`${FRIENDS_API}/users/${userId}/friends/count`),
+      fetchJson(`${FRIENDS_API}/users/${userId}/followers/count`),
+      fetchJson(`${FRIENDS_API}/users/${userId}/followings/count`),
+      fetchJson(`${GROUPS_API}/users/${userId}/groups/roles`),
+      fetchJson(
         `${THUMBNAILS_API}/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png`,
       ),
     ]);
 
-  const [user, friends, followers, badges, groups, avatar] =
-    await Promise.all([
-      userRes.json(),
-      friendsRes.json(),
-      followersRes.json(),
-      badgesRes.json(),
-      groupsRes.json(),
-      avatarRes.json(),
-    ]);
+  const createdAt = new Date(user.created as string);
+  if (Number.isNaN(createdAt.getTime())) {
+    throw new Error(`Roblox returned an invalid creation date for ${username}.`);
+  }
 
   return {
     id: userId,
     username,
-    joinYear: new Date(user.created as string).getFullYear(),
+    joinYear: createdAt.getFullYear(),
     avatarUrl: avatar.data?.[0]?.imageUrl ?? "",
     friendsCount: friends.count ?? 0,
     followersCount: followers.count ?? 0,
-    // Roblox has no direct "total badges" endpoint; this counts the first
-    // 100 badges returned, which is an approximation for very prolific accounts.
-    badgesCount: badges.data?.length ?? 0,
+    followingCount: following.count ?? 0,
     groupsCount: groups.data?.length ?? 0,
   };
 }
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse,
-) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { username1, username2 } = req.query;
 
   if (typeof username1 !== "string" || typeof username2 !== "string") {
@@ -80,20 +79,44 @@ export default async function handler(
     return;
   }
 
+  const requestedA = username1.trim();
+  const requestedB = username2.trim();
+
+  if (!requestedA || !requestedB) {
+    res.status(400).json({ error: "username1 and username2 are required." });
+    return;
+  }
+
+  // Roblox de-duplicates the lookup below, so the same username twice would
+  // resolve to a single user battling itself and tie on every stat.
+  if (requestedA.toLowerCase() === requestedB.toLowerCase()) {
+    res.status(400).json({ error: "Choose two different players." });
+    return;
+  }
+
   try {
-    const resolved = await resolveUsernames([username1, username2]);
+    const resolved = await resolveUsernames([requestedA, requestedB]);
 
-    const userA = resolved.find(
-      (user) => user.requestedUsername.toLowerCase() === username1.toLowerCase(),
-    );
-    const userB = resolved.find(
-      (user) => user.requestedUsername.toLowerCase() === username2.toLowerCase(),
-    );
+    const findUser = (username: string) =>
+      resolved.find(
+        (user) =>
+          user.requestedUsername?.toLowerCase() === username.toLowerCase(),
+      );
 
+    const userA = findUser(requestedA);
+    const userB = findUser(requestedB);
+
+    // A username is missing when it does not exist or belongs to a banned
+    // account, which `excludeBannedUsers` filters out of the response.
     if (!userA || !userB) {
-      res
-        .status(404)
-        .json({ error: "One or both usernames were not found." });
+      const notFound = [
+        userA ? null : requestedA,
+        userB ? null : requestedB,
+      ].filter(Boolean);
+
+      res.status(404).json({
+        error: `Player${notFound.length > 1 ? "s" : ""} not found: ${notFound.join(", ")}.`,
+      });
       return;
     }
 

@@ -4,6 +4,7 @@ type InputProps = {
   value: string;
   onChange: (value: string) => void;
   error?: string;
+  disabled?: boolean;
 };
 
 export default function Input({
@@ -12,8 +13,9 @@ export default function Input({
   value,
   onChange,
   error,
+  disabled = false,
 }: InputProps) {
-  const inputClasses = `w-full bg-slate-800/80 border focus:outline-none focus:ring-2 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 transition-colors ${
+  const inputClasses = `w-full bg-slate-800/80 border focus:outline-none focus:ring-2 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
     error
       ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
       : "border-slate-700 focus:border-sky-500 focus:ring-sky-500/20"
@@ -31,6 +33,7 @@ export default function Input({
         type="text"
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        disabled={disabled}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${name}-error` : undefined}
         className={inputClasses}

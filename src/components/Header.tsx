@@ -5,7 +5,7 @@ export default function Header() {
         Who wins this <span className="text-red-600">FACE-OFF</span>?
       </h1>
       <p className="mt-4 text-slate-400 text-lg max-w-md mx-auto">
-        Compare two Roblox players side-by-side: friends, badges, groups, and
+        Compare two Roblox players side-by-side: friends, followers, groups, and
         more.
       </p>
     </header>

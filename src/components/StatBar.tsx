@@ -15,9 +15,11 @@ export default function StatBar({
   valueB,
   showDivider,
 }: StatBarProps) {
+  // With no data on either side the track stays empty, instead of two half
+  // bars that would look like both players scored the same real value.
   const total = valueA + valueB;
-  const percentageA = total === 0 ? 50 : (valueA / total) * 100;
-  const percentageB = 100 - percentageA;
+  const percentageA = total === 0 ? 0 : (valueA / total) * 100;
+  const percentageB = total === 0 ? 0 : 100 - percentageA;
 
   const isAWinner = valueA > valueB;
   const isBWinner = valueB > valueA;

@@ -5,7 +5,7 @@ export type PlayerStats = {
   avatarUrl: string;
   friendsCount: number;
   followersCount: number;
-  badgesCount: number;
+  followingCount: number;
   groupsCount: number;
 };
 

@@ -22,9 +22,9 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
       valueB: playerB.followersCount,
     },
     {
-      label: "Badges earned",
-      valueA: playerA.badgesCount,
-      valueB: playerB.badgesCount,
+      label: "Following",
+      valueA: playerA.followingCount,
+      valueB: playerB.followingCount,
     },
     {
       label: "Groups",
