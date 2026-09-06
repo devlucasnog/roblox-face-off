@@ -1,6 +1,7 @@
 import { Fragment, useActionState, useState } from "react";
 
 import Input from "./Input";
+import type { BattleResult } from "../types/player";
 
 const SUGGESTIONS = ["Builderman", "Shedletsky", "Roblox"];
 
@@ -14,7 +15,11 @@ type BattleState = {
   error?: string;
 };
 
-export default function Form() {
+type FormProps = {
+  onBattleComplete: (result: BattleResult) => void;
+};
+
+export default function Form({ onBattleComplete }: FormProps) {
   const [username1, setUsername1] = useState("");
   const [username2, setUsername2] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
@@ -47,7 +52,7 @@ export default function Form() {
       return { success: false, error: data.error ?? "Something went wrong." };
     }
 
-    console.log(data);
+    onBattleComplete(data as BattleResult);
 
     return { success: true };
   }

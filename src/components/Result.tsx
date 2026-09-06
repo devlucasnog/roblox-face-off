@@ -41,7 +41,11 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
   }
 
   const winner =
-    scoreA === scoreB ? null : scoreA > scoreB ? playerA.username : playerB.username;
+    scoreA === scoreB
+      ? null
+      : scoreA > scoreB
+        ? playerA.username
+        : playerB.username;
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -49,6 +53,7 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
         <PlayerHeader
           gradientColor="blue"
           username={playerA.username}
+          avatarUrl={playerA.avatarUrl}
           yearOfCreation={String(playerA.joinYear)}
           side="right"
         />
@@ -60,6 +65,7 @@ export default function Result({ playerA, playerB, onReset }: ResultProps) {
         <PlayerHeader
           gradientColor="rose"
           username={playerB.username}
+          avatarUrl={playerB.avatarUrl}
           yearOfCreation={String(playerB.joinYear)}
           side="left"
         />
