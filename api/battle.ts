@@ -4,7 +4,7 @@ import {
   fetchPlayerStats,
   resolveUsernames,
   RobloxApiError,
-} from "./_lib/roblox";
+} from "./_lib/roblox.js";
 
 const CACHE_BATTLE = "public, s-maxage=300, stale-while-revalidate=600";
 const CACHE_NOT_FOUND = "public, s-maxage=60";
